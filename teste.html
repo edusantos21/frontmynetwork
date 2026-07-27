@@ -1,0 +1,110 @@
+<!-- site.html - EQUIPAMENTOS (via Cloudflare Tunnel - URL atualizada) -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Network - Equipamentos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #1a1a2e; color: white; font-family: Arial; padding: 20px; }
+        h1 { text-align: center; color: #00ff88; margin-bottom: 10px; }
+        .config { text-align: center; margin-bottom: 15px; }
+        .config select, .config input { 
+            padding: 8px; border: none; border-radius: 5px;
+            background: #16213e; color: white; text-align: center;
+        }
+        .config select { width: 150px; }
+        .config input { width: 430px; }
+        .resumo { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .resumo span { padding: 10px 20px; border-radius: 8px; background: #16213e; }
+        .online { color: #00ff88; }
+        .offline { color: #ff4444; }
+        table { width: 100%; border-collapse: collapse; background: #16213e; border-radius: 10px; overflow: hidden; }
+        th { background: #0f3460; padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #0f3460; font-size: 14px; }
+        tr:hover { background: #1a1a40; }
+        .status-online { color: #00ff88; font-weight: bold; }
+        .status-offline { color: #ff4444; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>My Network - Equipamentos</h1>
+    
+    <div class="config">
+        <input type="text" id="url" value="https://excessive-forgotten-had-manhattan.trycloudflare.com/equipamentos">
+        <select id="intervalo">
+            <option value="5">5 segundos</option>
+            <option value="10" selected>10 segundos</option>
+            <option value="15">15 segundos</option>
+            <option value="30">30 segundos</option>
+        </select>
+    </div>
+    
+    <div class="resumo">
+        <span>Total: <b id="total">0</b></span>
+        <span class="online">Online: <b id="online">0</b></span>
+        <span class="offline">Offline: <b id="offline">0</b></span>
+    </div>
+    
+    <table>
+        <thead>
+            <tr><th>Nome</th><th>IP</th><th>Localidade</th><th>Status</th><th>Latencia</th><th>Clientes</th></tr>
+        </thead>
+        <tbody id="tabela"></tbody>
+    </table>
+
+<script>
+    console.warn = function() {};
+    
+    let apiUrl = document.getElementById("url").value;
+    let intervaloAtual = 10000;
+    let timer = null;
+    
+    async function carregar() {
+        try {
+            let resp = await fetch(apiUrl);
+            let dados = await resp.json();
+            
+            let online = 0, offline = 0;
+            let html = "";
+            
+            dados.forEach(eq => {
+                let cls = eq.status && eq.status.includes("ONLINE") ? "status-online" : "status-offline";
+                if (eq.status && eq.status.includes("ONLINE")) online++; else offline++;
+                
+                html += `<tr>
+                    <td>${eq.nome || "-"}</td>
+                    <td>${eq.ip || "-"}</td>
+                    <td>${eq.localidade || "-"}</td>
+                    <td class="${cls}">${eq.status || "N/A"}</td>
+                    <td>${eq.latencia > 0 ? eq.latencia + " ms" : "-"}</td>
+                    <td>${eq.clientes || 0}</td>
+                </tr>`;
+            });
+            
+            document.getElementById("tabela").innerHTML = html;
+            document.getElementById("total").textContent = dados.length;
+            document.getElementById("online").textContent = online;
+            document.getElementById("offline").textContent = offline;
+        } catch(e) {}
+    }
+    
+    document.getElementById("url").addEventListener("change", function() {
+        apiUrl = this.value;
+        if (timer) clearInterval(timer);
+        carregar();
+        timer = setInterval(carregar, intervaloAtual);
+    });
+    
+    document.getElementById("intervalo").addEventListener("change", function() {
+        intervaloAtual = parseInt(this.value) * 1000;
+        if (timer) clearInterval(timer);
+        timer = setInterval(carregar, intervaloAtual);
+    });
+    
+    carregar();
+    timer = setInterval(carregar, intervaloAtual);
+</script>
+</body>
+</html>

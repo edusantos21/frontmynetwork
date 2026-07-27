@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Network - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+</head>
+<body class="bg-zinc-950 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-zinc-900 p-5 rounded-2xl shadow-2xl w-full max-w-xs border border-zinc-800">
+        <div class="text-center mb-3">
+            <div class="h-8 w-8 bg-emerald-600 rounded-lg flex items-center justify-center text-lg font-bold text-white mx-auto shadow-lg shadow-emerald-500/20 mb-1.5">M</div>
+            <h1 class="text-lg font-bold text-white">My Network</h1>
+            <p class="text-xs text-zinc-500">Monitoramento de Rede</p>
+        </div>
+
+        <div class="flex mb-3">
+            <button id="tabLogin" class="flex-1 py-1 text-xs text-white border-b-2 border-emerald-500 font-semibold">Entrar</button>
+            <button id="tabCadastro" class="flex-1 py-1 text-xs text-zinc-400 border-b-2 border-transparent">Criar conta</button>
+        </div>
+
+        <form id="formLogin" class="space-y-2">
+            <input type="email" id="emailLogin" placeholder="E-mail" class="w-full p-2 bg-zinc-800 text-white rounded-lg outline-none border border-zinc-700 focus:border-emerald-500 text-xs">
+            <input type="password" id="senhaLogin" placeholder="Senha" class="w-full p-2 bg-zinc-800 text-white rounded-lg outline-none border border-zinc-700 focus:border-emerald-500 text-xs">
+            <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg">Entrar</button>
+        </form>
+
+        <form id="formCadastro" class="space-y-2 hidden">
+            <input type="text" id="nomeCadastro" placeholder="Nome" class="w-full p-2 bg-zinc-800 text-white rounded-lg outline-none border border-zinc-700 focus:border-emerald-500 text-xs">
+            <input type="email" id="emailCadastro" placeholder="E-mail" class="w-full p-2 bg-zinc-800 text-white rounded-lg outline-none border border-zinc-700 focus:border-emerald-500 text-xs">
+            <input type="password" id="senhaCadastro" placeholder="Senha (mínimo 6)" class="w-full p-2 bg-zinc-800 text-white rounded-lg outline-none border border-zinc-700 focus:border-emerald-500 text-xs">
+            <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg">Criar conta</button>
+        </form>
+
+        <p id="mensagem" class="text-center mt-2 text-xs hidden"></p>
+    </div>
+
+    <script>
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        const tabLogin = document.getElementById('tabLogin');
+        const tabCadastro = document.getElementById('tabCadastro');
+        const formLogin = document.getElementById('formLogin');
+        const formCadastro = document.getElementById('formCadastro');
+        const msg = document.getElementById('mensagem');
+
+        function mostrarMsg(texto, cor) {
+            msg.textContent = texto;
+            msg.className = `text-center mt-2 text-xs ${cor}`;
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 4000);
+        }
+
+        tabLogin.onclick = () => {
+            formLogin.classList.remove('hidden'); formCadastro.classList.add('hidden');
+            tabLogin.className = 'flex-1 py-1 text-xs text-white border-b-2 border-emerald-500 font-semibold';
+            tabCadastro.className = 'flex-1 py-1 text-xs text-zinc-400 border-b-2 border-transparent';
+        };
+        
+        tabCadastro.onclick = () => {
+            formCadastro.classList.remove('hidden'); formLogin.classList.add('hidden');
+            tabCadastro.className = 'flex-1 py-1 text-xs text-white border-b-2 border-emerald-500 font-semibold';
+            tabLogin.className = 'flex-1 py-1 text-xs text-zinc-400 border-b-2 border-transparent';
+        };
+
+        formLogin.onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                const r = await auth.signInWithEmailAndPassword(
+                    document.getElementById('emailLogin').value,
+                    document.getElementById('senhaLogin').value
+                );
+                sessionStorage.setItem('userEmail', r.user.email);
+                sessionStorage.setItem('userNome', r.user.displayName || 'Usuário');
+                sessionStorage.setItem('userUid', r.user.uid);
+                window.location.href = 'html/dashboard.html';
+            } catch (x) {
+                mostrarMsg('E-mail ou senha incorretos.', 'text-red-400');
+            }
+        };
+
+        formCadastro.onsubmit = async (e) => {
+            e.preventDefault();
+            const n = document.getElementById('nomeCadastro').value;
+            const em = document.getElementById('emailCadastro').value;
+            const s = document.getElementById('senhaCadastro').value;
+            if (s.length < 6) { mostrarMsg('Senha mínima de 6 caracteres.', 'text-red-400'); return; }
+            try {
+                const r = await auth.createUserWithEmailAndPassword(em, s);
+                await r.user.updateProfile({ displayName: n });
+                await db.collection('usuarios').doc(r.user.uid).set({
+                    nome: n, email: em,
+                    url_tunel: '',
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                sessionStorage.setItem('userEmail', em);
+                sessionStorage.setItem('userNome', n);
+                sessionStorage.setItem('userUid', r.user.uid);
+                mostrarMsg('Conta criada! Redirecionando...', 'text-emerald-400');
+                setTimeout(() => window.location.href = 'html/dashboard.html', 1500);
+            } catch (x) {
+                mostrarMsg(x.code === 'auth/email-already-in-use' ? 'E-mail já cadastrado.' : 'Erro: ' + x.message, 'text-red-400');
+            }
+        };
+    </script>
+</body>
+</html>
