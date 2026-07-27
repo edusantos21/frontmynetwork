@@ -8,11 +8,11 @@ let visualizacao = 'lista';
 // ========== AUTENTICAÇÃO ==========
 auth.onAuthStateChanged(async (user) => {
     if (!user) { window.location.href = '../index.html'; return; }
-    
+
     document.getElementById('nomeUsuario').textContent = user.displayName || 'Usuário';
     document.getElementById('emailUsuario').textContent = user.email;
     document.getElementById('avatarNome').textContent = (user.displayName || 'U')[0].toUpperCase();
-    
+
     iniciarRelogio();
     await carregarEmpresasSeletor();
     // Não carrega dados automaticamente - o utils.js chama quando selecionar empresa
@@ -30,7 +30,7 @@ async function carregarEquipamentos() {
 
     let resp = await fetch(apiUrl + '/equipamentos');
     if (!resp.ok) throw new Error('Erro ' + resp.status);
-    
+
     todosEquipamentos = await resp.json();
     filtrarEquipamentos();
 }
@@ -39,13 +39,13 @@ async function carregarEquipamentos() {
 function filtrarEquipamentos() {
     let busca = document.getElementById('buscarEquipamento').value.toLowerCase();
     let filtro = document.getElementById('filtroTipo').value;
-    
+
     let filtrados = todosEquipamentos.filter(eq => {
         let nomeMatch = (eq.nome || '').toLowerCase().includes(busca);
         let ipMatch = (eq.ip || '').toLowerCase().includes(busca);
         let status = eq.status || '';
         let tipoMatch = true;
-        switch(filtro) {
+        switch (filtro) {
             case 'online': tipoMatch = status.includes('ONLINE'); break;
             case 'offline': tipoMatch = status.includes('OFFLINE'); break;
             case 'p2p': tipoMatch = eq.modo_operacao === 'p2p'; break;
@@ -55,7 +55,7 @@ function filtrarEquipamentos() {
         }
         return (nomeMatch || ipMatch) && tipoMatch;
     });
-    
+
     if (visualizacao === 'lista') renderizarTabela(filtrados);
     else renderizarCards(filtrados);
 }
@@ -75,19 +75,35 @@ function renderizarTabela(equipamentos) {
     equipamentos.forEach(eq => {
         let status = eq.status || 'N/A';
         let cls = status.includes('ONLINE') ? 'status-online' : 'status-offline';
-        let modo = eq.modo_operacao === 'p2p' ? 'P2P' : 'Cliente';
         let latencia = eq.latencia > 0 ? eq.latencia + 'ms' : '-';
         let mac = eq.mac ? eq.mac.toUpperCase() : '-';
         let ssh = eq.ssh_enabled ? 'Sim' : 'Não';
         let clientes = eq.clientes || 0;
         let ssid = eq.ssid ? eq.ssid.substring(0, 20) : '-';
+        let modo = eq.modo_operacao === 'p2p' ? 'P2P' : 'Cliente';
         let p2p = '-';
         if (eq.modo_operacao === 'p2p') {
             if (eq.p2p_tipo === 'ap') p2p = 'AP → ' + (eq.p2p_par || '-');
             else if (eq.p2p_tipo === 'station') p2p = '← Station ' + (eq.p2p_par || '-');
             else p2p = 'P2P';
         }
-        html += `<tr class="border-b border-zinc-800"><td><a href="http://${eq.ip}" target="_blank" class="text-emerald-400 hover:underline">${eq.nome || '-'}</a></td><td>${eq.ip || '-'}</td><td>${eq.porta || '80'}</td><td>${eq.localidade || '-'}</td><td>${modo}</td><td>${p2p}</td><td class="${cls}">${status}</td><td>${latencia}</td><td class="text-xs">${mac}</td><td>${ssh}</td><td>${clientes}</td><td class="text-xs">${ssid}</td><td><button onclick="editarEquipamento(${eq.id})" class="text-blue-400 hover:text-blue-300 text-xs mr-1">✏️</button><button onclick="excluirEquipamento(${eq.id}, '${(eq.nome || '').replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-xs">🗑️</button></td></tr>`;
+        html += `<tr class="border-b border-zinc-800">
+            <td><a href="http://${eq.ip}" target="_blank" class="text-emerald-400 hover:underline">${eq.nome || '-'}</a></td>
+            <td>${eq.ip || '-'}</td>
+            <td>${eq.porta || '80'}</td>
+            <td>${eq.localidade || '-'}</td>
+            <td>${modo}</td>
+            <td>${p2p}</td>
+            <td class="text-xs">${mac}</td>
+            <td>${ssh}</td>
+            <td>${clientes}</td>
+            <td class="text-xs">${ssid}</td>
+            <td class="${cls}">${status}</td>
+            <td>${latencia}</td>
+            <td>
+                <button onclick="editarEquipamento(${eq.id})" class="text-blue-400 hover:text-blue-300 text-xs mr-1">✏️</button>
+                <button onclick="excluirEquipamento(${eq.id}, '${(eq.nome || '').replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-xs">🗑️</button>
+            </td></tr>`;
     });
     document.getElementById('corpoTabela').innerHTML = html || '<tr><td colspan="13" class="text-center text-zinc-500 py-4">Nenhum equipamento</td></tr>';
 }
@@ -120,7 +136,7 @@ function carregarParesP2P() {
     let select = document.getElementById('formP2PPar'); select.innerHTML = '<option value="">Selecione...</option>';
     pares.forEach(p => { select.innerHTML += `<option value="${p.nome}">${p.nome} (${p.ip})</option>`; });
 }
-document.addEventListener('change', function(e) { if (e.target.name === 'p2pTipo') carregarParesP2P(); });
+document.addEventListener('change', function (e) { if (e.target.name === 'p2pTipo') carregarParesP2P(); });
 function toggleSSH() { document.getElementById('sshFields').classList.toggle('hidden', !document.getElementById('formSsh').checked); }
 
 // ========== MODAL ==========
@@ -176,12 +192,12 @@ async function salvarEquipamento() {
         let url = editandoId ? apiUrl + '/equipamento/' + editandoId : apiUrl + '/equipamento';
         let resp = await fetch(url, { method: editandoId ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
         if (resp.ok) { msg.textContent = '✅ Salvo!'; msg.className = 'text-xs mt-2 text-emerald-400'; msg.classList.remove('hidden'); setTimeout(() => { fecharModal(); carregarEquipamentos(); }, 1000); }
-    } catch(e) { msg.textContent = '❌ Erro'; msg.className = 'text-xs mt-2 text-red-400'; msg.classList.remove('hidden'); }
+    } catch (e) { msg.textContent = '❌ Erro'; msg.className = 'text-xs mt-2 text-red-400'; msg.classList.remove('hidden'); }
 }
 
 async function excluirEquipamento(id, nome) {
     if (!confirm(`Excluir "${nome}"?`)) return;
     apiUrl = await buscarUrlTunel();
     try { await fetch(apiUrl + '/equipamento/' + id, { method: 'DELETE' }); carregarEquipamentos(); }
-    catch(e) { alert('Erro ao excluir'); }
+    catch (e) { alert('Erro ao excluir'); }
 }

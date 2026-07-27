@@ -137,23 +137,6 @@ main.flex-1.p-6.overflow-hidden {
     }
 }
 
-@media (max-width: 1280px) {
-    .grid-cards-resumo {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.5rem !important;
-    }
-    .grid-2x2 {
-        gap: 0.5rem !important;
-    }
-    .grid-2x2 > .card-grafico {
-        font-size: 11px !important;
-    }
-    .grid-2x2 > .card-grafico h3 {
-        font-size: 12px !important;
-        margin-bottom: 0.5rem !important;
-    }
-}
-
 @media (max-width: 1024px) {
     main.flex-1.p-6 {
         padding: 0.75rem !important;
@@ -173,7 +156,7 @@ main.flex-1.p-6.overflow-hidden {
 }
 
 /* ============================================================
-   DASHBOARD - Cards de Resumo (3x2 Desktop / Flexível Mobile)
+   DASHBOARD - Cards de Resumo
    ============================================================ */
 .grid-cards-resumo {
     display: grid;
@@ -181,35 +164,57 @@ main.flex-1.p-6.overflow-hidden {
     gap: 0.75rem;
 }
 
+.grid-cards-resumo .bg-zinc-900 {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 85px;
+}
+
+.grid-cards-resumo .text-2xl {
+    font-size: 1.5rem;
+}
+
+@media (max-width: 1280px) {
+    .grid-cards-resumo {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    .grid-cards-resumo .bg-zinc-900 {
+        padding: 0.75rem;
+        min-height: 75px;
+    }
+    .grid-cards-resumo .text-2xl {
+        font-size: 1.25rem;
+    }
+}
+
 @media (max-width: 767px) {
     .grid-cards-resumo {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.5rem;
+    }
+    .grid-cards-resumo .bg-zinc-900 {
+        padding: 0.6rem;
+        min-height: 65px;
+    }
+    .grid-cards-resumo .text-2xl {
+        font-size: 1.1rem;
     }
 }
 
 /* ============================================================
    DASHBOARD - Cards + Pizza
    ============================================================ */
-@media (max-width: 980px) {
+@media (max-width: 767px) {
     .grid.grid-cols-5.gap-4.mb-4 {
         grid-template-columns: 1fr !important;
     }
     .grid.grid-cols-5.gap-4.mb-4 > .col-span-3,
     .grid.grid-cols-5.gap-4.mb-4 > .col-span-2 {
         grid-column: span 1 !important;
-    }
-}
-
-@media (max-width: 969px) {
-    .grid-cards-resumo {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.3rem !important;
-    }
-    .grid-cards-resumo .p-4 {
-        padding: 0.4rem !important;
-    }
-    .grid-cards-resumo .text-2xl {
-        font-size: 1rem !important;
     }
 }
 
@@ -223,16 +228,30 @@ main.flex-1.p-6.overflow-hidden {
     flex: 1;
     min-height: 0;
 }
+
 .grid-2x2 > .card-grafico {
     min-height: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
+
 .grid-2x2 .scroll-grafico {
     flex: 1 1 0;
     min-height: 0;
     overflow-y: auto;
+}
+
+@media (max-width: 1280px) {
+    .grid-2x2 {
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .grid-2x2 > .card-grafico {
+        min-height: clamp(300px, 55vh, 500px);
+    }
 }
 
 @media (max-width: 767px) {
@@ -242,25 +261,19 @@ main.flex-1.p-6.overflow-hidden {
         gap: 1rem;
     }
     .grid-2x2 > .card-grafico {
-        min-height: 400px;
-        max-height: 400px;
-        height: 400px;
-    }
-    .grid-2x2 .scroll-grafico {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow-y: auto;
+        height: 300px;
+        min-height: 300px;
+        max-height: 300px;
     }
 }
 
 /* ============================================================
    EQUIPAMENTOS
    ============================================================ */
-
 #containerEquipamentos {
-    height: calc(100vh - 280px);
-    max-height: calc(100vh - 280px);
+    flex: 1;
     min-height: 300px;
+    max-height: calc(100vh - 250px);
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -273,6 +286,7 @@ main.flex-1.p-6.overflow-hidden {
 #tabelaEquipamentos th,
 #tabelaEquipamentos td {
     white-space: nowrap;
+    text-align: left;
 }
 
 #cabecalhoTabela {
@@ -280,6 +294,12 @@ main.flex-1.p-6.overflow-hidden {
     top: 0;
     z-index: 10;
     background: #1f2937;
+}
+
+@media (max-width: 1366px) {
+    #containerEquipamentos {
+        max-height: calc(100vh - 220px);
+    }
 }
 
 @media (max-width: 767px) {
@@ -290,26 +310,17 @@ main.flex-1.p-6.overflow-hidden {
         width: 100% !important;
     }
     #containerEquipamentos {
-        height: calc(100vh - 300px);
         max-height: calc(100vh - 300px);
-    }
-}
-
-@media (max-width: 1366px) {
-    #containerEquipamentos {
-        height: calc(100vh - 250px);
-        max-height: calc(100vh - 250px);
     }
 }
 
 /* ============================================================
    CLIENTES
    ============================================================ */
-
 #containerClientes {
-    height: calc(100vh - 350px);
-    max-height: calc(100vh - 350px);
+    flex: 1;
     min-height: 300px;
+    max-height: calc(100vh - 300px);
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -324,11 +335,10 @@ main.flex-1.p-6.overflow-hidden {
     white-space: nowrap;
 }
 
-#cabecalhoTabela {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: #1f2937;
+@media (max-width: 1366px) {
+    #containerClientes {
+        max-height: calc(100vh - 270px);
+    }
 }
 
 @media (max-width: 767px) {
@@ -336,26 +346,17 @@ main.flex-1.p-6.overflow-hidden {
         width: 100% !important;
     }
     #containerClientes {
-        height: calc(100vh - 300px);
         max-height: calc(100vh - 300px);
-    }
-}
-
-@media (max-width: 1366px) {
-    #containerClientes {
-        height: calc(100vh - 320px);
-        max-height: calc(100vh - 320px);
     }
 }
 
 /* ============================================================
    SERVIDORES
    ============================================================ */
-
 #containerServidores {
-    height: calc(100vh - 280px);
-    max-height: calc(100vh - 280px);
+    flex: 1;
     min-height: 300px;
+    max-height: calc(100vh - 250px);
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -370,11 +371,10 @@ main.flex-1.p-6.overflow-hidden {
     white-space: nowrap;
 }
 
-#cabecalhoTabela {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: #1f2937;
+@media (max-width: 1366px) {
+    #containerServidores {
+        max-height: calc(100vh - 220px);
+    }
 }
 
 @media (max-width: 767px) {
@@ -382,26 +382,17 @@ main.flex-1.p-6.overflow-hidden {
         width: 100% !important;
     }
     #containerServidores {
-        height: calc(100vh - 300px);
         max-height: calc(100vh - 300px);
-    }
-}
-
-@media (max-width: 1366px) {
-    #containerServidores {
-        height: calc(100vh - 250px);
-        max-height: calc(100vh - 250px);
     }
 }
 
 /* ============================================================
    ENERGIAS
    ============================================================ */
-
 #containerEnergias {
-    height: calc(100vh - 280px);
-    max-height: calc(100vh - 280px);
+    flex: 1;
     min-height: 300px;
+    max-height: calc(100vh - 250px);
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -416,11 +407,10 @@ main.flex-1.p-6.overflow-hidden {
     white-space: nowrap;
 }
 
-#cabecalhoTabela {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: #1f2937;
+@media (max-width: 1366px) {
+    #containerEnergias {
+        max-height: calc(100vh - 220px);
+    }
 }
 
 @media (max-width: 767px) {
@@ -428,26 +418,17 @@ main.flex-1.p-6.overflow-hidden {
         width: 100% !important;
     }
     #containerEnergias {
-        height: calc(100vh - 300px);
         max-height: calc(100vh - 300px);
-    }
-}
-
-@media (max-width: 1366px) {
-    #containerEnergias {
-        height: calc(100vh - 250px);
-        max-height: calc(100vh - 250px);
     }
 }
 
 /* ============================================================
    SERVIÇOS
    ============================================================ */
-
 #containerServicos {
-    height: calc(100vh - 280px);
-    max-height: calc(100vh - 280px);
+    flex: 1;
     min-height: 300px;
+    max-height: calc(100vh - 250px);
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -462,11 +443,10 @@ main.flex-1.p-6.overflow-hidden {
     white-space: nowrap;
 }
 
-#cabecalhoTabela {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: #1f2937;
+@media (max-width: 1366px) {
+    #containerServicos {
+        max-height: calc(100vh - 220px);
+    }
 }
 
 @media (max-width: 767px) {
@@ -474,26 +454,17 @@ main.flex-1.p-6.overflow-hidden {
         width: 100% !important;
     }
     #containerServicos {
-        height: calc(100vh - 300px);
         max-height: calc(100vh - 300px);
-    }
-}
-
-@media (max-width: 1366px) {
-    #containerServicos {
-        height: calc(100vh - 250px);
-        max-height: calc(100vh - 250px);
     }
 }
 
 /* ============================================================
    LOCALIDADES
    ============================================================ */
-
 #containerLocalidades {
-    height: calc(100vh - 280px);
-    max-height: calc(100vh - 280px);
+    flex: 1;
     min-height: 300px;
+    max-height: calc(100vh - 250px);
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -515,29 +486,43 @@ main.flex-1.p-6.overflow-hidden {
     background: #1f2937;
 }
 
+@media (max-width: 1366px) {
+    #containerLocalidades {
+        max-height: calc(100vh - 220px);
+    }
+}
+
 @media (max-width: 767px) {
     #buscar {
         width: 100% !important;
     }
     #containerLocalidades {
-        height: calc(100vh - 300px);
         max-height: calc(100vh - 300px);
-    }
-}
-
-@media (max-width: 1366px) {
-    #containerLocalidades {
-        height: calc(100vh - 250px);
-        max-height: calc(100vh - 250px);
     }
 }
 
 /* ============================================================
    CONFIGURAÇÕES
    ============================================================ */
-
 @media (max-width: 767px) {
     .grid-2x2 > .card-grafico {
         min-height: auto;
     }
+}
+/* ============================================================
+   STATUS - Cores Online/Offline
+   ============================================================ */
+.status-online { color: #10b981 !important; font-weight: 600; }
+.status-offline { color: #ef4444 !important; font-weight: 600; }
+
+/* ============================================================
+   TABELAS - Alinhamento UNIVERSAL à ESQUERDA
+   ============================================================ */
+#tabelaEquipamentos th,
+#tabelaEquipamentos td,
+#tabelaClientes th,
+#tabelaClientes td,
+#tabela th,
+#tabela td {
+    text-align: left !important;
 }
