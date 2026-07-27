@@ -1,4 +1,4 @@
-// js/utils.js - COMPLETO FINAL (SEM atuali zarInfoTunel)
+// js/utils.js - COMPLETO FINAL (COM LIMPEZA DE CACHE FORÇADA)
 // ========== FORÇAR URL DO TÚNEL EM TODAS AS REQUISIÇÕES ==========
 const originalFetch = window.fetch;
 window.fetch = async function(...args) {
@@ -230,6 +230,10 @@ function iniciarReconexaoGlobal(callback, minhaGeracao) {
         verificandoStatus = true;
 
         try {
+            // ✅ FORÇA LIMPAR CACHE E BUSCAR URL NOVA DO FIREBASE
+            urlTunelCache = null;
+            urlTunelTimestamp = 0;
+            
             let urlAtual = await obterUrlAtual();
             console.log(`🔍 [RECONEXÃO] Fetch em: ${urlAtual}`);
             await callback();
@@ -345,17 +349,19 @@ function escutarEmpresaAtual() {
 
             console.log('🔁 [LISTENER] URL atualizada!', empresaSelecionada.url_tunel, '➡️', novaUrl);
             empresaSelecionada.url_tunel = novaUrl;
+            
+            // ✅ FORÇA LIMPEZA DO CACHE
             urlTunelCache = novaUrl || null;
             urlTunelTimestamp = Date.now();
-
+            
+            // ✅ FORÇA ATUALIZAÇÃO IMEDIATA (sem debounce)
             if (debounceListenerTimer) clearTimeout(debounceListenerTimer);
-            debounceListenerTimer = setTimeout(() => {
-                debounceListenerTimer = null;
-                let callback = getCallback();
-                if (callback) {
-                    iniciarPrimeiraCarga(callback);
-                }
-            }, DEBOUNCE_LISTENER_MS);
+            
+            let callback = getCallback();
+            if (callback) {
+                console.log('🔄 [LISTENER] Reiniciando carga com nova URL');
+                iniciarPrimeiraCarga(callback);
+            }
         });
 }
 
@@ -401,6 +407,7 @@ function selecionarEmpresa(emp) {
     empresaSelecionada = emp;
     localStorage.setItem('empresaSelecionada', emp.id);
 
+    // ✅ FORÇA LIMPEZA DO CACHE AO TROCAR DE EMPRESA
     urlTunelCache = emp.url_tunel && emp.url_tunel.trim() !== '' ? emp.url_tunel : null;
     urlTunelTimestamp = Date.now();
 
@@ -449,6 +456,10 @@ firebase.auth().onAuthStateChanged(async (user) => {
         await carregarEmpresasSeletor();
         iniciarListenerEmpresas();
 
+        // ✅ FORÇA LIMPAR CACHE NA INICIALIZAÇÃO
+        urlTunelCache = null;
+        urlTunelTimestamp = 0;
+        
         let url = await obterUrlAtual();
 
         let callback = getCallback();
@@ -470,7 +481,11 @@ function sair() {
     if (unsubscribeEmpresas) { unsubscribeEmpresas(); unsubscribeEmpresas = null; }
     if (unsubscribeEmpresaAtual) { unsubscribeEmpresaAtual(); unsubscribeEmpresaAtual = null; }
     localStorage.removeItem('empresaSelecionada');
+    
+    // ✅ LIMPA CACHE COMPLETO AO SAIR
     urlTunelCache = null;
+    urlTunelTimestamp = 0;
+    
     firebase.auth().signOut();
     sessionStorage.clear();
     window.location.href = '../index.html';
