@@ -36,6 +36,9 @@
             <a href="dashboard.html"
                 class="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-600/10 text-emerald-400 border-b-2 border-emerald-500">📊
                 Dashboard</a>
+            <a href="monitoramento.html"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📋
+                Monitoramento</a>
             <a href="equipamentos.html"
                 class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📡
                 Equipamentos</a>
@@ -131,27 +134,33 @@
         <div class="grid grid-cols-5 gap-4 mb-4">
             <div class="col-span-3">
                 <div class="grid-cards-resumo">
-                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center">
+                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center cursor-pointer hover:border-emerald-500 transition-all"
+                        onclick="window.location.href='monitoramento.html?status=online'">
                         <p class="text-xs text-zinc-500">Online</p>
                         <p id="dashOnline" class="text-2xl font-bold text-emerald-400 mt-1">0</p>
                     </div>
-                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center">
+                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center cursor-pointer hover:border-red-500 transition-all"
+                        onclick="window.location.href='monitoramento.html?status=offline'">
                         <p class="text-xs text-zinc-500">Offline</p>
                         <p id="dashOffline" class="text-2xl font-bold text-red-400 mt-1">0</p>
                     </div>
-                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center">
+                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center cursor-pointer hover:border-blue-500 transition-all"
+                        onclick="window.location.href='clientes.html'">
                         <p class="text-xs text-zinc-500">Clientes</p>
                         <p id="dashClientes" class="text-2xl font-bold text-blue-400 mt-1">0</p>
                     </div>
-                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center">
+                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center cursor-pointer hover:border-zinc-500 transition-all"
+                        onclick="window.location.href='equipamentos.html'">
                         <p class="text-xs text-zinc-500">Equipamentos</p>
                         <p id="dashEquip" class="text-2xl font-bold text-white mt-1">0</p>
                     </div>
-                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center">
+                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center cursor-pointer hover:border-zinc-500 transition-all"
+                        onclick="window.location.href='servidores.html'">
                         <p class="text-xs text-zinc-500">Servidores</p>
                         <p id="dashServ" class="text-2xl font-bold text-white mt-1">0</p>
                     </div>
-                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center">
+                    <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-center cursor-pointer hover:border-yellow-500 transition-all"
+                        onclick="window.location.href='energias.html'">
                         <p class="text-xs text-zinc-500">Energia</p>
                         <p id="dashEnergia" class="text-2xl font-bold text-white mt-1">0</p>
                     </div>

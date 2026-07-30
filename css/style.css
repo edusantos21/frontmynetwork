@@ -1,4 +1,19 @@
 /* ============================================================
+   BASE - Tamanho de fonte por resolução
+   ============================================================ */
+@media (max-width: 374px) { html { font-size: 12px; } }
+@media (min-width: 375px) and (max-width: 413px) { html { font-size: 12px; } }
+@media (min-width: 414px) and (max-width: 639px) { html { font-size: 13px; } }
+@media (min-width: 640px) and (max-width: 767px) { html { font-size: 14px; } }
+@media (min-width: 768px) and (max-width: 1023px) { html { font-size: 13px; } }
+@media (min-width: 1024px) and (max-width: 1279px) { html { font-size: 12px; } }
+@media (min-width: 1280px) and (max-width: 1365px) { html { font-size: 11px; } }
+@media (min-width: 1366px) and (max-width: 1439px) { html { font-size: 11px; } }
+@media (min-width: 1440px) and (max-width: 1919px) { html { font-size: 12px; } }
+@media (min-width: 1920px) and (max-width: 2559px) { html { font-size: 13px; } }
+@media (min-width: 2560px) { html { font-size: 16px; } }
+
+/* ============================================================
    GLOBAL - Scrollbar
    ============================================================ */
 .custom-scroll::-webkit-scrollbar { width: 4px; }
@@ -266,14 +281,46 @@ main.flex-1.p-6.overflow-hidden {
         max-height: 300px;
     }
 }
+/* ============================================================
+   MONITORAMENTO
+   ============================================================ */
+#containerMonitoramento {
+    flex: 1;
+    min-height: 0;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+#tabelaMonitoramento {
+    width: 100%;
+    min-width: 700px;
+}
+
+#tabelaMonitoramento th,
+#tabelaMonitoramento td {
+    white-space: nowrap;
+    text-align: left !important;
+    padding: 8px 12px;
+}
+
+@media (max-width: 1366px) {
+    #containerMonitoramento {
+        max-height: none;
+    }
+}
+
+@media (max-width: 767px) {
+    #containerMonitoramento {
+        max-height: calc(100vh - 300px);
+    }
+}
 
 /* ============================================================
    EQUIPAMENTOS
    ============================================================ */
 #containerEquipamentos {
     flex: 1;
-    min-height: 300px;
-    max-height: calc(100vh - 250px);
+    min-height: 0;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -296,12 +343,6 @@ main.flex-1.p-6.overflow-hidden {
     background: #1f2937;
 }
 
-@media (max-width: 1366px) {
-    #containerEquipamentos {
-        max-height: calc(100vh - 220px);
-    }
-}
-
 @media (max-width: 767px) {
     .flex.items-center.gap-2.mb-4 {
         flex-wrap: wrap;
@@ -309,11 +350,7 @@ main.flex-1.p-6.overflow-hidden {
     #buscarEquipamento {
         width: 100% !important;
     }
-    #containerEquipamentos {
-        max-height: calc(100vh - 300px);
-    }
 }
-
 /* ============================================================
    CLIENTES
    ============================================================ */

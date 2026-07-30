@@ -41,8 +41,14 @@ function filtrarEquipamentos() {
     let filtro = document.getElementById('filtroTipo').value;
 
     let filtrados = todosEquipamentos.filter(eq => {
-        let nomeMatch = (eq.nome || '').toLowerCase().includes(busca);
-        let ipMatch = (eq.ip || '').toLowerCase().includes(busca);
+        // Busca aprimorada: nome, IP, localidade, MAC, SSID
+        const nome = (eq.nome || '').toLowerCase();
+        const ip = (eq.ip || '').toLowerCase();
+        const localidade = (eq.localidade || '').toLowerCase();
+        const mac = (eq.mac || '').toLowerCase();
+        const ssid = (eq.ssid || '').toLowerCase();
+        const buscaMatch = !busca || nome.includes(busca) || ip.includes(busca) || localidade.includes(busca) || mac.includes(busca) || ssid.includes(busca);
+
         let status = eq.status || '';
         let tipoMatch = true;
         switch (filtro) {
@@ -53,7 +59,7 @@ function filtrarEquipamentos() {
             case 'station': tipoMatch = eq.modo_operacao === 'p2p' && eq.p2p_tipo === 'station'; break;
             case 'painel': tipoMatch = eq.modo_operacao === 'cliente'; break;
         }
-        return (nomeMatch || ipMatch) && tipoMatch;
+        return buscaMatch && tipoMatch;
     });
 
     if (visualizacao === 'lista') renderizarTabela(filtrados);

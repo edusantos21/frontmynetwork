@@ -369,6 +369,7 @@ function getCallback() {
     if (typeof carregarDashboard === 'function') return carregarDashboard;
     if (typeof carregarClientes === 'function') return carregarClientes;
     if (typeof carregarEquipamentos === 'function') return carregarEquipamentos;
+    if (typeof carregarMonitoramento === 'function') return carregarMonitoramento;
     if (typeof carregar === 'function') return carregar;
     return null;
 }
