@@ -1,11 +1,11 @@
-<!-- html/energias.html - COM SUBMENU EQUIPAMENTOS -->
+<!-- html/grupos.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Network - Energias</title>
+    <title>My Network - Grupos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -16,25 +16,20 @@
 
 <body class="bg-zinc-950 text-zinc-100 flex min-h-screen font-sans">
 
-    <!-- Overlay -->
     <div class="overlay-menu" id="overlayMenu" onclick="toggleMenu()"></div>
 
-    <aside class="bg-zinc-900 border-r border-zinc-800 p-5 flex flex-col w-64"
-        style="max-height: 100vh; overflow-y: auto;">
+    <!-- SIDEBAR -->
+    <aside class="bg-zinc-900 border-r border-zinc-800 p-5 flex flex-col w-64" style="max-height: 100vh; overflow-y: auto;">
         <div class="flex items-center gap-3 mb-8 px-2">
             <div class="h-8 w-8 bg-emerald-600 rounded-lg flex items-center justify-center font-bold text-white">M</div>
             <div>
-                <h2 class="text-md font-bold text-white">My Network</h2><span
-                    class="text-xs text-zinc-500">Monitoramento</span>
+                <h2 class="text-md font-bold text-white">My Network</h2>
+                <span class="text-xs text-zinc-500">Monitoramento</span>
             </div>
         </div>
         <nav class="space-y-1 text-sm font-medium">
-            <a href="dashboard.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📊
-                Dashboard</a>
-            <a href="monitoramento.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📋
-                Monitoramento</a>
+            <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📊 Dashboard</a>
+            <a href="monitoramento.html" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📋 Monitoramento</a>
 
             <!-- GRUPO EQUIPAMENTOS -->
             <div>
@@ -46,30 +41,17 @@
                     </svg>
                 </button>
                 <div id="submenuEquipamentos" class="hidden pl-4 mt-1 space-y-1">
-                    <a href="equipamentos.html" id="menuEquipamentos"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📡
-                        Equipamentos</a>
-                    <a href="clientes.html" id="menuClientes"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">👥
-                        Clientes</a>
-                    <a href="servidores.html" id="menuServidores"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🖥️
-                        Servidores</a>
-                    <a href="energias.html" id="menuEnergias"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-600/10 text-emerald-400 border-b-2 border-emerald-500">⚡
-                        Energias</a>
-                    <a href="servicos.html" id="menuServicos"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🔌
-                        Serviços</a>
-                    <a href="localidades.html" id="menuLocalidades"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📍
-                        Localidades</a>
+                    <a href="equipamentos.html" id="menuEquipamentos" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📡 Equipamentos</a>
+                    <a href="clientes.html" id="menuClientes" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">👥 Clientes</a>
+                    <a href="servidores.html" id="menuServidores" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🖥️ Servidores</a>
+                    <a href="energias.html" id="menuEnergias" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">⚡ Energias</a>
+                    <a href="servicos.html" id="menuServicos" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🔌 Serviços</a>
+                    <a href="localidades.html" id="menuLocalidades" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📍 Localidades</a>
                 </div>
             </div>
 
-            <a href="configuracoes.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">⚙️
-                Configurações</a>
+            <a href="configuracoes.html" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">⚙️ Configurações</a>
+
             <!-- GRUPO USUÁRIOS -->
             <div>
                 <button id="btnGrupoUsuarios" onclick="toggleSubmenuUsuarios()"
@@ -82,51 +64,48 @@
                 <div id="submenuUsuarios" class="hidden pl-4 mt-1 space-y-1">
                     <a href="vinculados.html" id="menuVinculados" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">👤 Vinculados</a>
                     <a href="solicitacoes.html" id="menuSolicitacoes" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">⏳ Solicitações</a>
-                    <a href="grupos.html" id="menuGrupos" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🔧 Grupos</a>
+                    <a href="grupos.html" id="menuGrupos" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-600/10 text-emerald-400 border-b-2 border-emerald-500">🔧 Grupos</a>
                 </div>
             </div>
         </nav>
         <div class="border-t border-zinc-800 pt-4 mt-auto">
             <div class="flex items-center gap-3 px-2 mb-3">
-                <div class="h-8 w-8 bg-zinc-700 rounded-full flex items-center justify-center text-xs font-bold"
-                    id="avatarNome">U</div>
+                <div class="h-8 w-8 bg-zinc-700 rounded-full flex items-center justify-center text-xs font-bold" id="avatarNome">U</div>
                 <div>
                     <p class="text-sm text-white font-medium" id="nomeUsuario">...</p>
                     <p class="text-xs text-zinc-500" id="emailUsuario">...</p>
                 </div>
-            </div><button onclick="sair()"
-                class="w-full py-2 bg-zinc-800 hover:bg-red-950/40 text-zinc-400 hover:text-red-400 rounded-xl border border-zinc-700 text-sm">Sair</button>
+            </div>
+            <button onclick="sair()" class="w-full py-2 bg-zinc-800 hover:bg-red-950/40 text-zinc-400 hover:text-red-400 rounded-xl border border-zinc-700 text-sm">Sair</button>
         </div>
     </aside>
 
+    <!-- CONTEÚDO -->
     <main class="flex-1 p-6 overflow-hidden flex flex-col" style="max-height: 100vh;">
+
         <div class="flex justify-between items-center my-10">
             <h2 class="text-2xl font-bold text-white">
-                ⚡ Energias
+                🔧 Grupos
                 <button class="btn-hamburguer" onclick="toggleMenu()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
             </h2>
             <div class="flex items-center gap-3">
-                <div class="relative"><button id="btnSeletorEmpresa" onclick="toggleDropdownEmpresas()"
-                        class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 rounded-lg transition-all duration-200 text-xs"><span>🏢</span><span
-                            id="nomeEmpresaAtual" class="text-white font-medium">Carregando...</span><svg
-                            id="setaDropdown" class="w-3 h-3 text-emerald-400 transition-transform" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg></button>
-                    <div id="dropdownEmpresas"
-                        class="hidden absolute right-0 mt-2 w-56 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div class="relative">
+                    <button id="btnSeletorEmpresa" onclick="toggleDropdownEmpresas()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 rounded-lg transition-all duration-200 text-xs">
+                        <span>🏢</span>
+                        <span id="nomeEmpresaAtual" class="text-white font-medium">Carregando...</span>
+                        <svg id="setaDropdown" class="w-3 h-3 text-emerald-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="dropdownEmpresas" class="hidden absolute right-0 mt-2 w-56 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl z-50 overflow-hidden">
                         <div id="listaEmpresasDropdown" class="max-h-48 overflow-y-auto p-1"></div>
                     </div>
                 </div>
-                <!-- BLOCO TÚNEL + DATA/HORA -->
-                <span
-                    class="status-bar text-xs border border-zinc-700 rounded-lg px-3 py-1 bg-zinc-900 flex items-center gap-2 whitespace-nowrap">
+                <span class="status-bar text-xs border border-zinc-700 rounded-lg px-3 py-1 bg-zinc-900 flex items-center gap-2 whitespace-nowrap">
                     <span id="statusServidor" class="text-emerald-400">🟢 Online</span>
                     <span class="text-zinc-600">·</span>
                     <span id="dataHoje" class="text-gray-400">--/--/----</span>
@@ -135,8 +114,7 @@
                         <span id="relogio" class="font-mono text-emerald-400">--:--:--</span>
                         <span class="text-zinc-600">·</span>
                         <span class="text-zinc-400">Atualizar</span>
-                        <select id="intervalo"
-                            class="bg-transparent text-emerald-400 text-xs outline-none border-none p-0">
+                        <select id="intervalo" class="bg-transparent text-emerald-400 text-xs outline-none border-none p-0">
                             <option value="5" class="bg-zinc-900 text-white">5s</option>
                             <option value="10" selected class="bg-zinc-900 text-white">10s</option>
                             <option value="15" class="bg-zinc-900 text-white">15s</option>
@@ -147,60 +125,61 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-2 mb-4 flex-wrap">
-            <input type="text" id="buscar" placeholder="🔍 Buscar..."
-                class="w-48 p-1.5 bg-zinc-800 text-white rounded-lg border border-zinc-700 text-xs" oninput="filtrar()">
-            <select id="filtroTipo" class="bg-zinc-800 text-white p-1.5 rounded-lg border border-zinc-700 text-xs"
-                onchange="filtrar()">
-                <option value="todos">📋 Todos</option>
-                <option value="online">🟢 Online</option>
-                <option value="offline">🔴 Offline</option>
-            </select>
-            <button onclick="alternarVisualizacao()" id="btnVisualizacao"
-                class="py-1.5 px-3 bg-zinc-800 text-white rounded-lg border border-zinc-700 text-xs hover:bg-zinc-700 whitespace-nowrap">🎴
-                Cards</button>
-            <button onclick="mostrarFormulario()"
-                class="py-1.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg whitespace-nowrap">➕
-                Adicionar</button>
+        <!-- BOTÃO CRIAR -->
+        <div class="flex items-center gap-2 mb-4">
+            <button onclick="abrirModalGrupo()" class="py-1.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg">➕ Criar Grupo</button>
         </div>
 
-        <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800">
-            <div id="containerEnergias" class="custom-scroll">
-                <table id="tabela">
-                    <thead id="cabecalhoTabela">
-                        <tr class="text-zinc-500 border-b border-zinc-800">
-                            <th>Nome</th>
-                            <th>IP</th>
-                            <th>Localidade</th>
-                            <th>Status</th>
-                            <th>Latência</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoTabela"></tbody>
-                </table>
+        <!-- LISTA DE GRUPOS -->
+        <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 flex-1 overflow-hidden flex flex-col" style="min-height: 0;">
+            <h3 class="text-sm font-bold text-white mb-3">Grupos Cadastrados</h3>
+            <div id="listaGrupos" class="space-y-2 overflow-y-auto custom-scroll">
+                <p class="text-zinc-500 text-xs">Nenhum grupo cadastrado.</p>
             </div>
         </div>
+
+        <p id="msgGrupo" class="text-xs mt-2 hidden"></p>
     </main>
 
-    <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-        <div class="bg-zinc-900 p-6 rounded-2xl shadow-2xl w-full max-w-md border border-zinc-800">
-            <h3 id="tituloModal" class="text-sm font-bold text-white mb-4">Adicionar Energia</h3>
-            <div class="space-y-3">
-                <div><label class="text-xs text-zinc-500 block mb-1">Nome</label><input type="text" id="formNome"
-                        class="w-full p-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 text-sm"></div>
-                <div><label class="text-xs text-zinc-500 block mb-1">IP</label><input type="text" id="formIp"
-                        class="w-full p-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 text-sm"></div>
-                <div><label class="text-xs text-zinc-500 block mb-1">Localidade</label><input type="text"
-                        id="formLocalidade"
-                        class="w-full p-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 text-sm"></div>
+    <!-- ========== MODAL: CRIAR/EDITAR GRUPO ========== -->
+    <div id="modalGrupo" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <div class="bg-zinc-900 p-5 rounded-2xl shadow-2xl w-full max-w-2xl border border-zinc-800 max-h-[90vh] overflow-y-auto custom-scroll">
+            <h3 id="tituloModalGrupo" class="text-sm font-bold text-white mb-4">➕ Criar Grupo</h3>
+
+            <!-- Nome e Ícone -->
+            <div class="grid grid-cols-4 gap-2 mb-4">
+                <div class="col-span-1">
+                    <label class="text-xs text-zinc-500 block mb-1">Ícone</label>
+                    <select id="grupoIcone" class="w-full p-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 text-lg text-center">
+                        <option value="🔧">🔧</option>
+                    </select>
+                </div>
+                <div class="col-span-3">
+                    <label class="text-xs text-zinc-500 block mb-1">Nome do Grupo</label>
+                    <input type="text" id="grupoNome" placeholder="Ex: Técnico Campo" class="w-full p-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 text-sm">
+                </div>
             </div>
-            <div class="flex gap-2 mt-4"><button onclick="salvar()"
-                    class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-lg">Salvar</button><button
-                    onclick="fecharModal()"
-                    class="flex-1 py-2 bg-zinc-700 hover:bg-zinc-600 text-white text-sm rounded-lg">Cancelar</button>
+
+            <!-- Permissões -->
+            <div class="overflow-x-auto custom-scroll mb-4">
+                <table class="w-full text-xs">
+                    <thead>
+                        <tr class="border-b border-zinc-700 text-zinc-500">
+                            <th class="text-left py-2 px-1">Módulo</th>
+                            <th class="text-center py-2 px-2 w-12">Ver</th>
+                            <th class="text-center py-2 px-2 w-12">Add</th>
+                            <th class="text-center py-2 px-2 w-12">Edit</th>
+                            <th class="text-center py-2 px-2 w-12">Del</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaPermissoesGrupo"></tbody>
+                </table>
             </div>
-            <p id="msgForm" class="text-xs mt-2 hidden"></p>
+
+            <div class="flex gap-2">
+                <button onclick="salvarGrupo()" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-lg">💾 Salvar</button>
+                <button onclick="fecharModalGrupo()" class="flex-1 py-2 bg-zinc-700 hover:bg-zinc-600 text-white text-sm rounded-lg">Cancelar</button>
+            </div>
         </div>
     </div>
 
@@ -301,7 +280,7 @@
     <script src="../js/permissoes.js"></script>
     <script src="../js/auth-guard.js"></script>
     <script src="../js/utils.js"></script>
-    <script src="../js/energias.js"></script>
+    <script src="../js/grupos.js"></script>
 </body>
 
 </html>

@@ -3,6 +3,7 @@ const auth = firebase.auth();
 let apiUrl = '';
 let todosDispositivos = [];
 let visualizacao = 'lista';
+let filtroUrlAplicado = false;
 
 // ========== AUTENTICAÇÃO ==========
 auth.onAuthStateChanged(async (user) => {
@@ -39,54 +40,104 @@ async function carregarMonitoramento() {
     ]);
 
     const equipamentos = await respEq.json();
-    const clientes = await respCli.json();
-    const servidores = await respSrv.json();
-    const energias = await respEn.json();
-    const servicos = await respSv.json();
+    const clientes     = await respCli.json();
+    const servidores   = await respSrv.json();
+    const energias     = await respEn.json();
+    const servicos     = await respSv.json();
 
     // Padroniza todos os dispositivos
     todosDispositivos = [
         ...equipamentos.map(e => ({ ...e, _tipo: 'equipamento' })),
-        ...clientes.map(c => ({ ...c, _tipo: 'cliente' })),
-        ...servidores.map(s => ({ ...s, _tipo: 'servidor' })),
-        ...energias.map(e => ({ ...e, _tipo: 'energia' })),
-        ...servicos.map(s => ({ ...s, _tipo: 'servico' }))
+        ...clientes.map(c     => ({ ...c, _tipo: 'cliente' })),
+        ...servidores.map(s   => ({ ...s, _tipo: 'servidor' })),
+        ...energias.map(e     => ({ ...e, _tipo: 'energia' })),
+        ...servicos.map(s     => ({ ...s, _tipo: 'servico' }))
     ];
 
-    // Aplica filtro da URL
-    const filtroUrl = getFiltroUrl();
-    if (filtroUrl !== 'todos') {
-        document.getElementById('filtroStatus').value = filtroUrl;
+    // ✅ Aplica filtro da URL APENAS na primeira carga
+    if (!filtroUrlAplicado) {
+        const filtroUrl = getFiltroUrl();
+        if (filtroUrl !== 'todos') {
+            document.getElementById('filtroTipo').value = filtroUrl;
+        }
+        filtroUrlAplicado = true;
     }
 
     filtrarMonitoramento();
 }
 
-// ========== FILTRAR ==========
+// ========== FILTRAR (COMPLETO - IGUAL EQUIPAMENTOS + TIPOS) ==========
 function filtrarMonitoramento() {
     const busca = document.getElementById('buscarMonitoramento').value.toLowerCase();
-    const filtroStatus = document.getElementById('filtroStatus').value;
-    const filtroTipo = document.getElementById('filtroTipo').value;
+    const filtro = document.getElementById('filtroTipo').value;
 
     let filtrados = todosDispositivos.filter(d => {
-        // Busca aprimorada: nome, IP, localidade, MAC
-        const nome = (d.nome || '').toLowerCase();
-        const ip = (d.ip || '').toLowerCase();
+        // ===== BUSCA =====
+        const nome       = (d.nome || '').toLowerCase();
+        const ip         = (d.ip || '').toLowerCase();
         const localidade = (d.localidade || d.endereco || '').toLowerCase();
-        const mac = (d.mac || '').toLowerCase();
-        const buscaMatch = !busca || nome.includes(busca) || ip.includes(busca) || localidade.includes(busca) || mac.includes(busca);
+        const mac        = (d.mac || '').toLowerCase();
+        const ssid       = (d.ssid || '').toLowerCase();
+        const buscaMatch = !busca
+            || nome.includes(busca)
+            || ip.includes(busca)
+            || localidade.includes(busca)
+            || mac.includes(busca)
+            || ssid.includes(busca);
 
-        // Filtro status
+        // ===== FILTRO =====
         const status = d.status || '';
-        let statusMatch = true;
-        if (filtroStatus === 'online') statusMatch = status.includes('ONLINE');
-        else if (filtroStatus === 'offline') statusMatch = status.includes('OFFLINE');
+        let filtroMatch = true;
 
-        // Filtro tipo
-        let tipoMatch = true;
-        if (filtroTipo !== 'todos') tipoMatch = d._tipo === filtroTipo;
+        switch (filtro) {
+            case 'online':
+                filtroMatch = status.includes('ONLINE');
+                break;
+            case 'offline':
+                filtroMatch = status.includes('OFFLINE');
+                break;
 
-        return buscaMatch && statusMatch && tipoMatch;
+            case 'equipamento':
+                filtroMatch = d._tipo === 'equipamento';
+                break;
+            case 'cliente':
+                filtroMatch = d._tipo === 'cliente';
+                break;
+            case 'servidor':
+                filtroMatch = d._tipo === 'servidor';
+                break;
+            case 'energia':
+                filtroMatch = d._tipo === 'energia';
+                break;
+            case 'servico':
+                filtroMatch = d._tipo === 'servico';
+                break;
+
+            case 'p2p':
+                filtroMatch = d._tipo === 'equipamento' && d.modo_operacao === 'p2p';
+                break;
+            case 'ap':
+                filtroMatch = d._tipo === 'equipamento' && d.modo_operacao === 'p2p' && d.p2p_tipo === 'ap';
+                break;
+            case 'station':
+                filtroMatch = d._tipo === 'equipamento' && d.modo_operacao === 'p2p' && d.p2p_tipo === 'station';
+                break;
+            case 'painel':
+                filtroMatch = d._tipo === 'equipamento' && d.modo_operacao === 'cliente';
+                break;
+
+            case 'radio':
+                filtroMatch = d._tipo === 'cliente' && d.tipo === 'radio';
+                break;
+            case 'fibra':
+                filtroMatch = d._tipo === 'cliente' && d.tipo === 'fibra';
+                break;
+
+            default:
+                filtroMatch = true;
+        }
+
+        return buscaMatch && filtroMatch;
     });
 
     if (visualizacao === 'lista') renderizarTabela(filtrados);
@@ -101,38 +152,60 @@ function alternarVisualizacao() {
     filtrarMonitoramento();
 }
 
-// ========== RENDERIZAR TABELA ==========
+// ========== FIRMWARE DISPLAY ==========
+function getFirmwareDisplay(fw) {
+    if (fw === 'ubiquiti') return 'Ubiquiti';
+    if (fw === 'bullet')   return 'Bullet';
+    if (fw === 'mikrotik') return 'MikroTik';
+    if (fw === 'mimosa')   return 'Mimosa';
+    return fw || 'Ubiquiti';
+}
+
+// ========== RENDERIZAR TABELA (IDÊNTICA EQUIPAMENTOS, SEM AÇÕES) ==========
 function renderizarTabela(dispositivos) {
     document.getElementById('cabecalhoTabela').style.display = '';
-    
+
     const icones = {
         equipamento: '📡',
-        servidor: '🖥️',
-        energia: '⚡',
-        servico: '🔌',
-        cliente: '👥'
+        servidor:    '🖥️',
+        energia:     '⚡',
+        servico:     '🔌',
+        cliente:     '👥'
     };
 
     let html = '';
     dispositivos.forEach(d => {
-        const status = d.status || 'N/A';
-        const cls = status.includes('ONLINE') ? 'status-online' : 'status-offline';
-        const latencia = d.latencia > 0 ? d.latencia + 'ms' : '-';
-        const mac = d.mac ? d.mac.toUpperCase() : '-';
-        const local = d.localidade || d.endereco || '-';
+        let status   = d.status || 'N/A';
+        let cls      = status.includes('ONLINE') ? 'status-online' : 'status-offline';
+        let latencia = d.latencia > 0 ? d.latencia + 'ms' : '-';
+        let mac      = d.mac ? d.mac.toUpperCase() : '-';
+        let ssh      = d.ssh_enabled ? 'Sim' : 'Não';
+        let clientes = d.clientes || 0;
+        let ssid     = d.ssid ? d.ssid.substring(0, 20) : '-';
+        let modo     = d.modo_operacao === 'p2p' ? 'P2P' : 'Cliente';
+        let firmware = getFirmwareDisplay(d.firmware);
+        let local    = d.localidade || d.endereco || '-';
+        let tipoIcone = icones[d._tipo] || '📌';
 
         html += `<tr class="border-b border-zinc-800">
-            <td>${icones[d._tipo] || '📌'} ${d._tipo}</td>
+            <td>${tipoIcone} ${d._tipo}</td>
             <td><a href="http://${d.ip}" target="_blank" class="text-emerald-400 hover:underline">${d.nome || '-'}</a></td>
             <td>${d.ip || '-'}</td>
+            <td>${d.porta || '80'}</td>
             <td>${local}</td>
+            <td>${modo}</td>
+            <td>${firmware}</td>
             <td class="text-xs">${mac}</td>
+            <td>${ssh}</td>
+            <td>${clientes}</td>
+            <td class="text-xs">${ssid}</td>
             <td class="${cls}">${status}</td>
             <td>${latencia}</td>
         </tr>`;
     });
 
-    document.getElementById('corpoTabela').innerHTML = html || '<tr><td colspan="7" class="text-center text-zinc-500 py-4">Nenhum dispositivo encontrado</td></tr>';
+    document.getElementById('corpoTabela').innerHTML = html ||
+        '<tr><td colspan="13" class="text-center text-zinc-500 py-4">Nenhum dispositivo encontrado</td></tr>';
 }
 
 // ========== RENDERIZAR CARDS ==========
@@ -141,25 +214,23 @@ function renderizarCards(dispositivos) {
 
     const icones = {
         equipamento: '📡',
-        servidor: '🖥️',
-        energia: '⚡',
-        servico: '🔌',
-        cliente: '👥'
+        servidor:    '🖥️',
+        energia:     '⚡',
+        servico:     '🔌',
+        cliente:     '👥'
     };
 
     let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">';
     dispositivos.forEach(d => {
-        const status = d.status || 'N/A';
-        const cls = status.includes('ONLINE') ? 'text-emerald-400' : 'text-red-400';
-        const iconeStatus = status.includes('ONLINE') ? '🟢' : '🔴';
-        const latencia = d.latencia > 0 ? d.latencia + 'ms' : '-';
-        const local = d.localidade || d.endereco || '-';
-        const mac = d.mac ? d.mac.toUpperCase() : '-';
+        let status = d.status || 'N/A', cls = status.includes('ONLINE') ? 'text-emerald-400' : 'text-red-400', icone = status.includes('ONLINE') ? '🟢' : '🔴';
+        let latencia = d.latencia > 0 ? d.latencia + 'ms' : '-';
+        let local = d.localidade || d.endereco || '-';
+        let mac = d.mac ? d.mac.toUpperCase() : '-';
 
-        html += `<div class="bg-zinc-800 p-2 rounded-lg border border-zinc-700 hover:border-zinc-600 transition-all">
+        html += `<div class="bg-zinc-800 p-2 rounded-lg border border-zinc-700">
             <div class="flex justify-between items-start mb-1">
                 <span class="text-xs text-zinc-400">${icones[d._tipo] || '📌'} ${d._tipo}</span>
-                <span class="${cls} text-xs font-bold ml-1">${iconeStatus}</span>
+                <span class="${cls} text-xs font-bold ml-1">${icone}</span>
             </div>
             <a href="http://${d.ip}" target="_blank" class="text-emerald-400 hover:underline font-bold text-xs truncate block">${d.nome || '-'}</a>
             <div class="text-zinc-500 text-xs space-y-0.5 mt-1">

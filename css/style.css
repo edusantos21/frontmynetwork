@@ -281,6 +281,7 @@ main.flex-1.p-6.overflow-hidden {
         max-height: 300px;
     }
 }
+
 /* ============================================================
    MONITORAMENTO
    ============================================================ */
@@ -293,14 +294,20 @@ main.flex-1.p-6.overflow-hidden {
 
 #tabelaMonitoramento {
     width: 100%;
-    min-width: 700px;
+    min-width: 900px;
 }
 
 #tabelaMonitoramento th,
 #tabelaMonitoramento td {
     white-space: nowrap;
-    text-align: left !important;
-    padding: 8px 12px;
+    text-align: left;
+}
+
+#tabelaMonitoramento thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #1f2937;
 }
 
 @media (max-width: 1366px) {
@@ -351,6 +358,7 @@ main.flex-1.p-6.overflow-hidden {
         width: 100% !important;
     }
 }
+
 /* ============================================================
    CLIENTES
    ============================================================ */
@@ -546,6 +554,7 @@ main.flex-1.p-6.overflow-hidden {
         min-height: auto;
     }
 }
+
 /* ============================================================
    STATUS - Cores Online/Offline
    ============================================================ */
@@ -562,4 +571,28 @@ main.flex-1.p-6.overflow-hidden {
 #tabela th,
 #tabela td {
     text-align: left !important;
+}
+/* ============================================================
+   TABELAS - HOVER NAS LINHAS (TODAS AS ABAS)
+   ============================================================ */
+#tabelaEquipamentos tbody tr,
+#tabelaMonitoramento tbody tr,
+#tabelaClientes tbody tr,
+#tabela tbody tr {
+    transition: background-color 0.15s ease;
+    cursor: default;
+}
+
+#tabelaEquipamentos tbody tr:hover,
+#tabelaMonitoramento tbody tr:hover,
+#tabelaClientes tbody tr:hover,
+#tabela tbody tr:hover {
+    background-color: rgba(16, 185, 129, 0.25);
+}
+
+#tabelaEquipamentos tbody tr:hover td,
+#tabelaMonitoramento tbody tr:hover td,
+#tabelaClientes tbody tr:hover td,
+#tabela tbody tr:hover td {
+    color: #ffffff;
 }

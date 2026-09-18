@@ -75,6 +75,9 @@
                     document.getElementById('emailLogin').value,
                     document.getElementById('senhaLogin').value
                 );
+                // ✅ SALVA O UID NO LOCALSTORAGE
+                localStorage.setItem('auth_uid', r.user.uid);
+                
                 sessionStorage.setItem('userEmail', r.user.email);
                 sessionStorage.setItem('userNome', r.user.displayName || 'Usuário');
                 sessionStorage.setItem('userUid', r.user.uid);
@@ -98,6 +101,10 @@
                     url_tunel: '',
                     criadoEm: firebase.firestore.FieldValue.serverTimestamp()
                 });
+
+                // ✅ SALVA O UID NO LOCALSTORAGE
+                localStorage.setItem('auth_uid', r.user.uid);
+
                 sessionStorage.setItem('userEmail', em);
                 sessionStorage.setItem('userNome', n);
                 sessionStorage.setItem('userUid', r.user.uid);

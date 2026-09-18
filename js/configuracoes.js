@@ -1,4 +1,4 @@
-// js/configuracoes.js - COMPLETO FINAL CORRIGIDO E ORGANIZADO
+// js/configuracoes.js - LIMPO + CRIAÇÃO DE GRUPOS PADRÃO
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -102,13 +102,6 @@ async function carregarEstado() {
 function atualizarInterface() {
     document.getElementById('blocoCriarEmpresa').classList.toggle('hidden', isAdmin);
     renderizarMinhasEmpresas();
-
-    if (empresaAdmin) {
-        document.getElementById('cardUsuarios').style.display = '';
-        carregarUsuarios();
-    } else {
-        document.getElementById('cardUsuarios').style.display = 'none';
-    }
 }
 
 // ========== RENDERIZAR EMPRESAS ==========
@@ -169,6 +162,7 @@ function editarNomeEmpresa(id, nomeAtual) {
         });
 }
 
+// ✅ CRIA EMPRESA JÁ SELECIONANDO ELA NO TOPO
 async function criarEmpresa() {
     if (isAdmin) {
         mostrarMsg('msgEmpresa', 'Você já é admin de uma empresa.', 'text-amber-400');
@@ -187,6 +181,7 @@ async function criarEmpresa() {
     let urlAtual = userDoc.data()?.url_tunel || '';
 
     try {
+        // 1. Cria a empresa
         await db.collection('empresas').doc(id).set({
             nome,
             proprietario: user.email,
@@ -194,6 +189,7 @@ async function criarEmpresa() {
             criadoEm: firebase.firestore.FieldValue.serverTimestamp()
         });
 
+        // 2. Cria o vínculo do admin
         await db.collection('vinculos').add({
             userId: user.uid,
             userEmail: user.email,
@@ -205,18 +201,62 @@ async function criarEmpresa() {
             criadoEm: firebase.firestore.FieldValue.serverTimestamp()
         });
 
+        // 3. Cria os 3 grupos padrão
+        await criarGruposPadrao(id);
+
+        // 4. Atualiza o user
         await db.collection('usuarios').doc(user.uid).set({
             email: user.email,
             empresaId: id,
             url_tunel: urlAtual
         }, { merge: true });
 
-        mostrarMsg('msgEmpresa', '✅ Empresa criada!', 'text-emerald-400');
+        // ✅ 5. Seleciona automaticamente a nova empresa no topo
+        localStorage.setItem('empresaSelecionada', id);
+
+        mostrarMsg('msgEmpresa', '✅ Empresa criada! Recarregando...', 'text-emerald-400');
         document.getElementById('inputCriarEmpresa').value = '';
-        await carregarEstado();
+
+        // ✅ 6. Recarrega a página pra atualizar tudo
+        setTimeout(() => { window.location.reload(); }, 1200);
     } catch (e) {
         console.error('ERRO AO CRIAR:', e);
         mostrarMsg('msgEmpresa', '❌ Erro: ' + e.message, 'text-red-400');
+    }
+}
+
+// ========== CRIAR GRUPOS PADRÃO ==========
+async function criarGruposPadrao(empresaId) {
+    const modulos = ['dashboard', 'monitoramento', 'equipamentos', 'clientes', 'servidores', 'energias', 'servicos', 'localidades', 'configuracoes'];
+
+    function montarPermissoes(tipo) {
+        let perm = {};
+        modulos.forEach(m => {
+            if (tipo === 'admin') {
+                perm[m] = { ver: true, adicionar: true, editar: true, excluir: true };
+            } else if (tipo === 'user') {
+                perm[m] = { ver: true, adicionar: true, editar: true, excluir: false };
+            } else if (tipo === 'leitor') {
+                perm[m] = { ver: true, adicionar: false, editar: false, excluir: false };
+            }
+        });
+        return perm;
+    }
+
+    let grupos = [
+        { nome: 'Admin',    icone: '👑', permissoes: montarPermissoes('admin') },
+        { nome: 'Usuário',  icone: '👤', permissoes: montarPermissoes('user') },
+        { nome: 'Leitor',   icone: '👁️', permissoes: montarPermissoes('leitor') }
+    ];
+
+    for (let g of grupos) {
+        await db.collection('grupos').add({
+            nome: g.nome,
+            icone: g.icone,
+            empresaId: empresaId,
+            permissoes: g.permissoes,
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        });
     }
 }
 
@@ -303,123 +343,6 @@ async function excluirEmpresa(empresaId) {
 
 function gerarIdEmpresa() {
     return `EMP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-}
-
-// ========== USUÁRIOS ==========
-async function carregarUsuarios() {
-    if (!empresaAdmin) return;
-    await carregarSolicitacoes();
-    await carregarVinculados();
-}
-
-async function carregarSolicitacoes() {
-    let lista = document.getElementById('listaSolicitacoes');
-    try {
-        let snapshot = await db.collection('vinculos')
-            .where('empresaId', '==', empresaAdmin.id)
-            .where('status', '==', 'pendente')
-            .get();
-
-        if (snapshot.empty) {
-            lista.innerHTML = '<p class="text-zinc-500 text-xs">Nenhuma.</p>';
-            return;
-        }
-
-        lista.innerHTML = '';
-        snapshot.forEach(doc => {
-            let v = doc.data();
-            let div = document.createElement('div');
-            div.className = 'flex items-center justify-between bg-zinc-800 p-2 rounded-lg';
-            div.innerHTML = `<div><span class="text-white text-xs font-medium">👤 ${v.userName}</span><span class="text-zinc-500 text-xs ml-1">${v.userEmail}</span></div>
-                <div class="flex gap-1">
-                    <select id="role_${doc.id}" class="bg-zinc-700 text-white text-xs rounded border border-zinc-600 p-0.5 mr-1">
-                        <option value="user">Usuário</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                    <button class="text-emerald-400 hover:text-emerald-300 text-xs px-2 py-1" onclick="gerenciarVinculo('${doc.id}','aprovado','${v.userId}')">✅</button>
-                    <button class="text-red-400 hover:text-red-300 text-xs px-2 py-1" onclick="gerenciarVinculo('${doc.id}','recusado')">❌</button>
-                </div>`;
-            lista.appendChild(div);
-        });
-    } catch (e) {
-        lista.innerHTML = '<p class="text-red-400 text-xs">Erro.</p>';
-    }
-}
-
-async function carregarVinculados() {
-    let lista = document.getElementById('listaVinculados');
-    try {
-        let snapshot = await db.collection('vinculos')
-            .where('empresaId', '==', empresaAdmin.id)
-            .where('status', '==', 'aprovado')
-            .get();
-
-        if (snapshot.empty) {
-            lista.innerHTML = '<p class="text-zinc-500 text-xs">Nenhum.</p>';
-            return;
-        }
-
-        lista.innerHTML = '';
-        snapshot.forEach(doc => {
-            let v = doc.data();
-            if (v.userId === auth.currentUser.uid) return;
-
-            let div = document.createElement('div');
-            div.className = 'flex items-center justify-between bg-zinc-800 p-2 rounded-lg';
-            div.innerHTML = `<div><span class="text-white text-xs font-medium">👤 ${v.userName}</span><span class="text-zinc-500 text-xs ml-1">${v.userEmail}</span></div>
-                <div class="flex items-center gap-2">
-                    <select onchange="alterarRole('${doc.id}', this.value)" class="bg-zinc-700 text-white text-xs rounded border border-zinc-600 p-0.5">
-                        <option value="admin" ${v.role === 'admin' ? 'selected' : ''}>Admin</option>
-                        <option value="user" ${v.role === 'user' ? 'selected' : ''}>Usuário</option>
-                    </select>
-                    <button onclick="removerVinculo('${doc.id}')" class="text-red-400 hover:text-red-300 text-xs">🗑️</button>
-                </div>`;
-            lista.appendChild(div);
-        });
-    } catch (e) {
-        lista.innerHTML = '<p class="text-red-400 text-xs">Erro.</p>';
-    }
-}
-
-async function gerenciarVinculo(vinculoId, status, userId) {
-    try {
-        let vinculoRef = db.collection('vinculos').doc(vinculoId);
-        if (status === 'aprovado' && userId) {
-            let role = document.getElementById('role_' + vinculoId)?.value || 'user';
-            let vinculoDoc = await vinculoRef.get();
-            let empId = vinculoDoc.data().empresaId;
-            let empDoc = await db.collection('empresas').doc(empId).get();
-            let url = empDoc.data()?.url_tunel || (await db.collection('usuarios').doc(auth.currentUser.uid).get()).data()?.url_tunel || '';
-            await vinculoRef.update({ status: 'aprovado', role, url_tunel: url });
-            mostrarMsg('msgEmpresa', '✅ Vinculado!', 'text-emerald-400');
-        } else {
-            await vinculoRef.update({ status });
-            mostrarMsg('msgEmpresa', '❌ Recusado.', 'text-red-400');
-        }
-        carregarUsuarios();
-    } catch (e) {
-        console.error('Erro:', e);
-    }
-}
-
-async function alterarRole(vinculoId, novoRole) {
-    try {
-        await db.collection('vinculos').doc(vinculoId).update({ role: novoRole });
-        mostrarMsg('msgEmpresa', '✅ Alterado!', 'text-emerald-400');
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-async function removerVinculo(vinculoId) {
-    if (!confirm('Remover?')) return;
-    try {
-        await db.collection('vinculos').doc(vinculoId).delete();
-        mostrarMsg('msgEmpresa', '✅ Removido!', 'text-emerald-400');
-        carregarUsuarios();
-    } catch (e) {
-        console.error(e);
-    }
 }
 
 // ========== UTILITÁRIOS ==========

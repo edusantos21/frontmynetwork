@@ -1,15 +1,13 @@
-// js/utils.js - COMPLETO FINAL (COM LIMPEZA DE CACHE FORÇADA)
+// js/utils.js - COMPLETO FINAL (COM SUBMENUS EQUIPAMENTOS E USUÁRIOS)
 // ========== FORÇAR URL DO TÚNEL EM TODAS AS REQUISIÇÕES ==========
 const originalFetch = window.fetch;
 window.fetch = async function(...args) {
     let url = typeof args[0] === 'string' ? args[0] : args[0].url;
 
-    // IGNORA requisições do Firebase
     if (url.includes('firestore') || url.includes('firebase') || url.includes('googleapis')) {
         return originalFetch.apply(this, args);
     }
 
-    // IGNORA localhost e 127.0.0.1
     if (url.includes('localhost') || url.includes('127.0.0.1')) {
         throw new Error('Localhost não disponível');
     }
@@ -230,7 +228,6 @@ function iniciarReconexaoGlobal(callback, minhaGeracao) {
         verificandoStatus = true;
 
         try {
-            // ✅ FORÇA LIMPAR CACHE E BUSCAR URL NOVA DO FIREBASE
             urlTunelCache = null;
             urlTunelTimestamp = 0;
             
@@ -350,11 +347,9 @@ function escutarEmpresaAtual() {
             console.log('🔁 [LISTENER] URL atualizada!', empresaSelecionada.url_tunel, '➡️', novaUrl);
             empresaSelecionada.url_tunel = novaUrl;
             
-            // ✅ FORÇA LIMPEZA DO CACHE
             urlTunelCache = novaUrl || null;
             urlTunelTimestamp = Date.now();
             
-            // ✅ FORÇA ATUALIZAÇÃO IMEDIATA (sem debounce)
             if (debounceListenerTimer) clearTimeout(debounceListenerTimer);
             
             let callback = getCallback();
@@ -408,7 +403,6 @@ function selecionarEmpresa(emp) {
     empresaSelecionada = emp;
     localStorage.setItem('empresaSelecionada', emp.id);
 
-    // ✅ FORÇA LIMPEZA DO CACHE AO TROCAR DE EMPRESA
     urlTunelCache = emp.url_tunel && emp.url_tunel.trim() !== '' ? emp.url_tunel : null;
     urlTunelTimestamp = Date.now();
 
@@ -418,6 +412,10 @@ function selecionarEmpresa(emp) {
     atualizarSeletorUI();
     document.getElementById('dropdownEmpresas').classList.add('hidden');
     document.getElementById('setaDropdown').style.transform = 'rotate(0deg)';
+
+    // ✅ FECHA O LISTENER ANTIGO E ABRE UM NOVO PRA NOVA EMPRESA
+    if (typeof pararListenerPermissoes === 'function') pararListenerPermissoes();
+    if (typeof iniciarListenerPermissoes === 'function') iniciarListenerPermissoes();
 
     let callback = getCallback();
     if (callback) {
@@ -451,13 +449,136 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// ============================================================
+// SUBMENU EQUIPAMENTOS
+// ============================================================
+function toggleSubmenuEquipamentos() {
+    let sub = document.getElementById('submenuEquipamentos');
+    let seta = document.getElementById('setaEquipamentos');
+    if (!sub) return;
+
+    if (sub.classList.contains('hidden')) {
+        sub.classList.remove('hidden');
+        if (seta) seta.style.transform = 'rotate(90deg)';
+        sessionStorage.setItem('submenuEquipamentosAberto', 'true');
+    } else {
+        sub.classList.add('hidden');
+        if (seta) seta.style.transform = 'rotate(0deg)';
+        sessionStorage.setItem('submenuEquipamentosAberto', 'false');
+    }
+}
+
+// ============================================================
+// SUBMENU USUÁRIOS
+// ============================================================
+function toggleSubmenuUsuarios() {
+    let sub = document.getElementById('submenuUsuarios');
+    let seta = document.getElementById('setaUsuarios');
+    if (!sub) return;
+
+    if (sub.classList.contains('hidden')) {
+        sub.classList.remove('hidden');
+        if (seta) seta.style.transform = 'rotate(90deg)';
+        sessionStorage.setItem('submenuUsuariosAberto', 'true');
+    } else {
+        sub.classList.add('hidden');
+        if (seta) seta.style.transform = 'rotate(0deg)';
+        sessionStorage.setItem('submenuUsuariosAberto', 'false');
+    }
+}
+
+// ============================================================
+// CACHE DO ESTADO DO MENU
+// ============================================================
+function salvarEstadoMenu() {
+    let menuUsuarios = document.getElementById('menuUsuarios');
+    if (menuUsuarios) {
+        const visivel = menuUsuarios.style.display !== 'none';
+        sessionStorage.setItem('menuUsuariosVisivel', visivel ? 'true' : 'false');
+    }
+
+    let sub = document.getElementById('submenuEquipamentos');
+    if (sub) {
+        sessionStorage.setItem('submenuEquipamentosAberto', sub.classList.contains('hidden') ? 'false' : 'true');
+    }
+
+    let subU = document.getElementById('submenuUsuarios');
+    if (subU) {
+        sessionStorage.setItem('submenuUsuariosAberto', subU.classList.contains('hidden') ? 'false' : 'true');
+    }
+}
+
+function aplicarEstadoMenuCache() {
+    const visivel = sessionStorage.getItem('menuUsuariosVisivel');
+    if (visivel === 'true') {
+        let el = document.getElementById('menuUsuarios');
+        if (el) el.style.display = '';
+    }
+
+    const subAberto = sessionStorage.getItem('submenuEquipamentosAberto');
+    if (subAberto === 'true') {
+        let sub = document.getElementById('submenuEquipamentos');
+        let seta = document.getElementById('setaEquipamentos');
+        if (sub) {
+            sub.classList.remove('hidden');
+            if (seta) seta.style.transform = 'rotate(90deg)';
+        }
+    }
+
+    const subUAberto = sessionStorage.getItem('submenuUsuariosAberto');
+    if (subUAberto === 'true') {
+        let subU = document.getElementById('submenuUsuarios');
+        let setaU = document.getElementById('setaUsuarios');
+        if (subU) {
+            subU.classList.remove('hidden');
+            if (setaU) setaU.style.transform = 'rotate(90deg)';
+        }
+    }
+}
+
 // ========== INICIALIZAÇÃO AUTOMÁTICA ==========
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
+        // ✅ SALVA O UID NO LOCALSTORAGE (pra usar no script inline)
+        localStorage.setItem('auth_uid', user.uid);
+
+        // ✅ APLICA CACHE DO MENU IMEDIATAMENTE (zero flash)
+        aplicarEstadoMenuCache();
+
+        // ✅ CARREGA EMPRESAS PRIMEIRO
         await carregarEmpresasSeletor();
+
+        // ✅ ESPERA A EMPRESA ESTAR DEFINIDA
+        let tentativasEmpresa = 0;
+        while (!empresaSelecionada && tentativasEmpresa < 30) {
+            await new Promise(r => setTimeout(r, 100));
+            tentativasEmpresa++;
+        }
+
+        // ✅ APLICA CACHE DO MENU DE NOVO (agora com empresa)
+        aplicarEstadoMenuCache();
+
+        // ✅ ABRE LISTENER EM TEMPO REAL
+        if (typeof iniciarListenerPermissoes === 'function') {
+            iniciarListenerPermissoes();
+        } else {
+            await carregarPermissoes();
+        }
+
+        // ✅ APLICA MENU E PERMISSÕES
+        if (typeof aplicarMenuUsuarios === 'function') aplicarMenuUsuarios();
+        if (typeof aplicarPermissoesNoDOM === 'function') aplicarPermissoesNoDOM();
+
+        // ✅ SALVA O ESTADO ATUAL DO MENU
+        salvarEstadoMenu();
+
+        // ✅ VERIFICA SE PODE ACESSAR ESSA PÁGINA
+        if (typeof protegerPaginaAtual === 'function') {
+            await protegerPaginaAtual();
+        }
+
         iniciarListenerEmpresas();
 
-        // ✅ FORÇA LIMPAR CACHE NA INICIALIZAÇÃO
         urlTunelCache = null;
         urlTunelTimestamp = 0;
         
@@ -475,15 +596,31 @@ firebase.auth().onAuthStateChanged(async (user) => {
     }
 });
 
+// ✅ SALVA O ESTADO DO MENU ANTES DE SAIR DA PÁGINA
+window.addEventListener('beforeunload', function() {
+    salvarEstadoMenu();
+});
+
+// ✅ SALVA O ESTADO QUANDO CLICA EM QUALQUER LINK .html
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('a[href$=".html"]');
+    if (link) {
+        salvarEstadoMenu();
+    }
+}, true);
+
 // ========== SAIR ==========
 function sair() {
+    if (typeof pararListenerPermissoes === 'function') pararListenerPermissoes();
+
     pararTudo();
     if (debounceListenerTimer) { clearTimeout(debounceListenerTimer); debounceListenerTimer = null; }
     if (unsubscribeEmpresas) { unsubscribeEmpresas(); unsubscribeEmpresas = null; }
     if (unsubscribeEmpresaAtual) { unsubscribeEmpresaAtual(); unsubscribeEmpresaAtual = null; }
     localStorage.removeItem('empresaSelecionada');
+    // ✅ LIMPA O UID DO LOCALSTORAGE
+    localStorage.removeItem('auth_uid');
     
-    // ✅ LIMPA CACHE COMPLETO AO SAIR
     urlTunelCache = null;
     urlTunelTimestamp = 0;
     

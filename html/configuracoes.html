@@ -1,4 +1,4 @@
-<!-- html/configuracoes.html - COMPLETO -->
+<!-- html/configuracoes.html - COM SUBMENU EQUIPAMENTOS -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -35,27 +35,56 @@
             <a href="monitoramento.html"
                 class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📋
                 Monitoramento</a>
-            <a href="equipamentos.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📡
-                Equipamentos</a>
-            <a href="clientes.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">👥
-                Clientes</a>
-            <a href="servidores.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🖥️
-                Servidores</a>
-            <a href="energias.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">⚡
-                Energias</a>
-            <a href="servicos.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🔌
-                Serviços</a>
-            <a href="localidades.html"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📍
-                Localidades</a>
+
+            <!-- GRUPO EQUIPAMENTOS -->
+            <div>
+                <button id="btnGrupoEquipamentos" onclick="toggleSubmenuEquipamentos()"
+                    class="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">
+                    <span class="flex items-center gap-3">📡 Equipamentos</span>
+                    <svg id="setaEquipamentos" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <div id="submenuEquipamentos" class="hidden pl-4 mt-1 space-y-1">
+                    <a href="equipamentos.html" id="menuEquipamentos"
+                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📡
+                        Equipamentos</a>
+                    <a href="clientes.html" id="menuClientes"
+                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">👥
+                        Clientes</a>
+                    <a href="servidores.html" id="menuServidores"
+                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🖥️
+                        Servidores</a>
+                    <a href="energias.html" id="menuEnergias"
+                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">⚡
+                        Energias</a>
+                    <a href="servicos.html" id="menuServicos"
+                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🔌
+                        Serviços</a>
+                    <a href="localidades.html" id="menuLocalidades"
+                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">📍
+                        Localidades</a>
+                </div>
+            </div>
+
             <a href="configuracoes.html"
                 class="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-600/10 text-emerald-400 border-b-2 border-emerald-500">⚙️
                 Configurações</a>
+            <!-- GRUPO USUÁRIOS -->
+            <div>
+                <button id="btnGrupoUsuarios" onclick="toggleSubmenuUsuarios()"
+                    class="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">
+                    <span class="flex items-center gap-3">👥 Usuários</span>
+                    <svg id="setaUsuarios" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <div id="submenuUsuarios" class="hidden pl-4 mt-1 space-y-1">
+                    <a href="vinculados.html" id="menuVinculados" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">👤 Vinculados</a>
+                    <a href="solicitacoes.html" id="menuSolicitacoes" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">⏳ Solicitações</a>
+                    <a href="grupos.html" id="menuGrupos" class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50">🔧 Grupos</a>
+                </div>
+            </div>
         </nav>
         <div class="border-t border-zinc-800 pt-4 mt-auto">
             <div class="flex items-center gap-3 px-2 mb-3">
@@ -98,7 +127,6 @@
                         <div id="listaEmpresasDropdown" class="max-h-48 overflow-y-auto p-1"></div>
                     </div>
                 </div>
-                <!-- BLOCO TÚNEL + DATA/HORA -->
                 <span
                     class="status-bar text-xs border border-zinc-700 rounded-lg px-3 py-1 bg-zinc-900 flex items-center gap-2 whitespace-nowrap">
                     <span id="statusServidor" class="text-emerald-400">🟢 Online</span>
@@ -235,28 +263,110 @@
                 </div>
             </div>
 
-            <!-- Card 4: Usuários -->
-            <div class="card-grafico bg-zinc-900 p-4 rounded-xl border border-zinc-800 flex flex-col" id="cardUsuarios"
-                style="display:none;">
-                <h3 class="text-sm font-bold text-white mb-3">👥 Usuários</h3>
-                <div class="space-y-2 flex-1 overflow-y-auto custom-scroll">
-                    <div>
-                        <p class="text-xs text-zinc-500 mb-1">Solicitações pendentes:</p>
-                        <div id="listaSolicitacoes" class="space-y-1">
-                            <p class="text-zinc-500 text-xs">Nenhuma.</p>
-                        </div>
-                    </div>
-                    <div class="border-t border-zinc-700 pt-1 mt-1">
-                        <p class="text-xs text-zinc-500 mb-1">Vinculados:</p>
-                        <div id="listaVinculados" class="space-y-1">
-                            <p class="text-zinc-500 text-xs">Nenhum.</p>
-                        </div>
-                    </div>
-                </div>
+            <!-- Card 4: vazio -->
+            <div class="card-grafico bg-zinc-900 p-4 rounded-xl border border-zinc-800 flex flex-col items-center justify-center text-zinc-600 text-xs">
+                <p>⚙️ Configurações Gerais</p>
+                <p class="mt-1">(em breve)</p>
             </div>
         </div>
     </main>
 
+    <!-- ✅ Aplica estado do menu ANTES dos outros scripts (zero flash) -->
+    <script>
+      (function() {
+        // ============================================================
+        // 1. APLICA PERMISSÕES DO MENU (USUÁRIOS + EQUIPAMENTOS)
+        // ============================================================
+        try {
+          var uid = localStorage.getItem('auth_uid');
+          var empresaId = localStorage.getItem('empresaSelecionada');
+
+          if (uid && empresaId) {
+            var cacheRaw = sessionStorage.getItem('perm_view_' + uid + '_' + empresaId);
+            if (cacheRaw) {
+              var cached = JSON.parse(cacheRaw);
+              var perm = cached.permissoes || {};
+
+              // ---------- GRUPO USUÁRIOS ----------
+              var vinculados   = perm.vinculados   && perm.vinculados.ver   === true;
+              var solicitacoes = perm.solicitacoes && perm.solicitacoes.ver === true;
+              var grupos       = perm.grupos       && perm.grupos.ver       === true;
+              var algumFilhoU  = vinculados || solicitacoes || grupos;
+
+              var btnU  = document.getElementById('btnGrupoUsuarios');
+              var subU  = document.getElementById('submenuUsuarios');
+              var mVinc = document.getElementById('menuVinculados');
+              var mSol  = document.getElementById('menuSolicitacoes');
+              var mGrp  = document.getElementById('menuGrupos');
+
+              if (!algumFilhoU) {
+                if (btnU) btnU.style.display = 'none';
+                if (subU) subU.style.display = 'none';
+              } else {
+                if (mVinc) mVinc.style.display = vinculados   ? '' : 'none';
+                if (mSol)  mSol.style.display  = solicitacoes ? '' : 'none';
+                if (mGrp)  mGrp.style.display  = grupos       ? '' : 'none';
+              }
+
+              // ---------- GRUPO EQUIPAMENTOS ----------
+              var equip       = perm.equipamentos && perm.equipamentos.ver === true;
+              var clientes    = perm.clientes     && perm.clientes.ver     === true;
+              var servidores  = perm.servidores   && perm.servidores.ver   === true;
+              var energias    = perm.energias     && perm.energias.ver     === true;
+              var servicos    = perm.servicos     && perm.servicos.ver     === true;
+              var localidades = perm.localidades  && perm.localidades.ver  === true;
+              var algumFilhoE = equip || clientes || servidores || energias || servicos || localidades;
+
+              var btnE  = document.getElementById('btnGrupoEquipamentos');
+              var subE  = document.getElementById('submenuEquipamentos');
+              var mEqui = document.getElementById('menuEquipamentos');
+              var mCli  = document.getElementById('menuClientes');
+              var mServ = document.getElementById('menuServidores');
+              var mEner = document.getElementById('menuEnergias');
+              var mServ2= document.getElementById('menuServicos');
+              var mLoc  = document.getElementById('menuLocalidades');
+
+              if (!algumFilhoE) {
+                if (btnE) btnE.style.display = 'none';
+                if (subE) subE.style.display = 'none';
+              } else {
+                if (mEqui)  mEqui.style.display  = equip       ? '' : 'none';
+                if (mCli)   mCli.style.display   = clientes    ? '' : 'none';
+                if (mServ)  mServ.style.display  = servidores  ? '' : 'none';
+                if (mEner)  mEner.style.display  = energias    ? '' : 'none';
+                if (mServ2) mServ2.style.display = servicos    ? '' : 'none';
+                if (mLoc)   mLoc.style.display   = localidades ? '' : 'none';
+              }
+            }
+          }
+        } catch(e) { /* ignora */ }
+
+        // ============================================================
+        // 2. SUBMENU EQUIPAMENTOS (estado aberto/fechado)
+        // ============================================================
+        var sub = document.getElementById('submenuEquipamentos');
+        var seta = document.getElementById('setaEquipamentos');
+        var subAberto = sessionStorage.getItem('submenuEquipamentosAberto');
+        if (sub && subAberto === 'true') {
+          sub.classList.remove('hidden');
+          if (seta) seta.style.transform = 'rotate(90deg)';
+        }
+
+        // ============================================================
+        // 3. SUBMENU USUÁRIOS (estado aberto/fechado)
+        // ============================================================
+        var subU2 = document.getElementById('submenuUsuarios');
+        var setaU2 = document.getElementById('setaUsuarios');
+        var subUAberto = sessionStorage.getItem('submenuUsuariosAberto');
+        if (subU2 && subUAberto === 'true') {
+          subU2.classList.remove('hidden');
+          if (setaU2) setaU2.style.transform = 'rotate(90deg)';
+        }
+      })();
+    </script>
+
+    <script src="../js/permissoes.js"></script>
+    <script src="../js/auth-guard.js"></script>
     <script src="../js/utils.js"></script>
     <script src="../js/configuracoes.js"></script>
 </body>
