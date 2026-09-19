@@ -566,11 +566,14 @@ main.flex-1.p-6.overflow-hidden {
    ============================================================ */
 #tabelaEquipamentos th,
 #tabelaEquipamentos td,
+#tabelaMonitoramento th,
+#tabelaMonitoramento td,
 #tabelaClientes th,
 #tabelaClientes td,
 #tabela th,
 #tabela td {
     text-align: left !important;
+    padding: 8px 12px !important;
 }
 /* ============================================================
    TABELAS - HOVER NAS LINHAS (TODAS AS ABAS)
