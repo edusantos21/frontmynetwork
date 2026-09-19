@@ -573,7 +573,7 @@ main.flex-1.p-6.overflow-hidden {
 #tabela th,
 #tabela td {
     text-align: left !important;
-    padding: 8px 12px !important;
+    padding: 4px 12px !important;
 }
 /* ============================================================
    TABELAS - HOVER NAS LINHAS (TODAS AS ABAS)
